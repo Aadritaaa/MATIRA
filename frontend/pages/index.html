@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATIRA — B2B Agricultural Marketplace</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #ffffff 100%);
+            border-radius: var(--radius-lg);
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 650px;
+            margin: 0 auto 24px auto;
+            color: var(--text-main);
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        .feature-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+        .feature-box .icon {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="/pages/index.html" class="nav-brand">
+            <span class="logo-icon">🌾</span>
+            <div>
+                MATIRA
+                <span class="subtext">B2B Agricultural Marketplace</span>
+            </div>
+        </a>
+        <div class="nav-links" id="navLinks">
+            <a href="/pages/index.html">Home</a>
+            <a href="/pages/login.html" class="btn btn-secondary btn-sm">Sign In</a>
+            <a href="/pages/register.html" class="btn btn-primary btn-sm">Register</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="hero">
+            <h1>Direct Agricultural Marketplace</h1>
+            <p>Connecting Farmers and Cooperatives directly with Local Business Buyers for fair pricing, transparent deals, and fresh harvests.</p>
+            <div style="display: flex; gap: 16px; justify-content: center;">
+                <a href="/pages/register.html" class="btn btn-primary">Join as Farmer / Buyer</a>
+                <a href="/pages/login.html" class="btn btn-secondary">Sign In to Dashboard</a>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-box">
+                <div class="icon">🧑‍🌾</div>
+                <h3>For Farmers & Cooperatives</h3>
+                <p>List bulk crops directly, set your asking price, and connect with business buyers without middlemen.</p>
+            </div>
+            <div class="feature-box">
+                <div class="icon">🏪</div>
+                <h3>For Business Buyers</h3>
+                <p>Source fresh produce, grains, and spices directly from verified regional farms and cooperatives.</p>
+            </div>
+            <div class="feature-box">
+                <div class="icon">📊</div>
+                <h3>AI Price Advisory</h3>
+                <p>Transparent reference pricing to ensure fair, win-win transactions for both producers and purchasers.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 MATIRA Project — CSE 3200 Software Development Project II</p>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        // Update nav links if already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = Auth.getUser();
+            if (user && Auth.getToken()) {
+                const navLinks = document.getElementById('navLinks');
+                if (navLinks) {
+                    const dashboardLink = user.role === 'farmer' ? '/pages/seller-dashboard.html' : '#';
+                    navLinks.innerHTML = `
+                        <span class="user-badge">${user.full_name} (${user.role})</span>
+                        <a href="${dashboardLink}" class="btn btn-primary btn-sm">My Dashboard</a>
+                        <button onclick="Auth.logout()" class="btn btn-secondary btn-sm">Logout</button>
+                    `;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

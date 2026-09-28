@@ -1,0 +1,119 @@
+/* =======================================================
+   MATIRA Authentication Stylesheet
+   ======================================================= */
+
+.auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 160px);
+    padding: 24px 16px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 480px;
+    background-color: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 32px;
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.auth-header .logo-badge {
+    font-size: 2.5rem;
+    margin-bottom: 8px;
+    display: inline-block;
+}
+
+.auth-header h1 {
+    font-size: 1.5rem;
+    color: var(--text-main);
+    margin-bottom: 6px;
+}
+
+.auth-header p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* Role Selector Radio Cards */
+.role-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.role-option {
+    position: relative;
+}
+
+.role-option input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.role-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 10px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+    background-color: #fafafa;
+}
+
+.role-card .role-icon {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+}
+
+.role-card .role-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+
+.role-card .role-desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.role-option input[type="radio"]:checked + .role-card {
+    border-color: var(--primary-color);
+    background-color: var(--primary-light);
+}
+
+.role-option input[type="radio"]:checked + .role-card .role-title {
+    color: var(--primary-hover);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9rem;
+}
+
+.auth-footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}

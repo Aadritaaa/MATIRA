@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register — MATIRA B2B Agricultural Marketplace</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="/pages/index.html" class="nav-brand">
+            <span class="logo-icon">🌾</span>
+            <div>
+                MATIRA
+                <span class="subtext">B2B Agricultural Marketplace</span>
+            </div>
+        </a>
+        <div class="nav-links">
+            <a href="/pages/index.html">Home</a>
+            <a href="/pages/login.html" class="btn btn-secondary btn-sm">Sign In</a>
+        </div>
+    </nav>
+
+    <!-- Registration Container -->
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo-badge">🧑‍🌾</div>
+                <h1>Create MATIRA Account</h1>
+                <p>Register as a Farmer/Seller or a Local Business Buyer</p>
+            </div>
+
+            <!-- Error alert -->
+            <div id="registerError" class="alert alert-danger" style="display: none;"></div>
+
+            <form id="registerForm">
+                <!-- Role Selection -->
+                <label>I want to register as:</label>
+                <div class="role-selector">
+                    <div class="role-option">
+                        <input type="radio" id="roleFarmer" name="role" value="farmer" checked>
+                        <label for="roleFarmer" class="role-card">
+                            <span class="role-icon">🧑‍🌾</span>
+                            <span class="role-title">Farmer / Seller</span>
+                            <span class="role-desc">Sell bulk harvest</span>
+                        </label>
+                    </div>
+                    <div class="role-option">
+                        <input type="radio" id="roleBuyer" name="role" value="buyer">
+                        <label for="roleBuyer" class="role-card">
+                            <span class="role-icon">🏪</span>
+                            <span class="role-title">Business Buyer</span>
+                            <span class="role-desc">Source farm produce</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Full Name -->
+                <div class="form-group">
+                    <label for="full_name">Full Name / Cooperative Name *</label>
+                    <input type="text" id="full_name" placeholder="e.g. Md. Abdul Karim" required>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="form-group">
+                    <label for="phone">Mobile Phone Number *</label>
+                    <input type="tel" id="phone" placeholder="e.g. 01711000000" required>
+                </div>
+
+                <!-- Email (Optional) -->
+                <div class="form-group">
+                    <label for="email">Email Address (Optional)</label>
+                    <input type="email" id="email" placeholder="e.g. abdul@example.com">
+                </div>
+
+                <!-- District / Location -->
+                <div class="form-group">
+                    <label for="district">District / Region *</label>
+                    <select id="district" required>
+                        <option value="">-- Select District --</option>
+                        <option value="Rajshahi">Rajshahi</option>
+                        <option value="Bogura">Bogura</option>
+                        <option value="Rangpur">Rangpur</option>
+                        <option value="Dinajpur">Dinajpur</option>
+                        <option value="Dhaka">Dhaka</option>
+                        <option value="Faridpur">Faridpur</option>
+                        <option value="Jessore">Jessore</option>
+                        <option value="Kushtia">Kushtia</option>
+                        <option value="Mymensingh">Mymensingh</option>
+                        <option value="Chattogram">Chattogram</option>
+                        <option value="Sylhet">Sylhet</option>
+                        <option value="Barishal">Barishal</option>
+                        <option value="Khulna">Khulna</option>
+                    </select>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="password">Password * (Min. 6 characters)</label>
+                    <input type="password" id="password" placeholder="Create a secure password" minlength="6" required>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="/pages/login.html">Sign In here</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 MATIRA Project — CSE 3200 Software Development Project II</p>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+</body>
+</html>
