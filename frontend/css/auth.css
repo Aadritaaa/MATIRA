@@ -26,19 +26,21 @@
 }
 
 .auth-brand-badge {
-    width: 56px;
-    height: 56px;
+    width: 64px;
+    height: 64px;
     background: var(--primary-light);
-    border-radius: 12px;
+    border: 1px solid rgba(46, 125, 50, 0.2);
+    border-radius: 16px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 12px;
+    box-shadow: 0 2px 8px rgba(46, 125, 50, 0.12);
 }
 
-.auth-brand-badge svg {
-    width: 32px;
-    height: 32px;
+.auth-brand-badge .crop-logo-icon {
+    font-size: 2.2rem;
+    line-height: 1;
 }
 
 .auth-brand-name {
