@@ -3,37 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seller Dashboard — MATIRA</title>
+    <title>Seller Dashboard — MATIRA B2B Agriculture</title>
     <link rel="stylesheet" href="/css/style.css">
-    <style>
-        .dashboard-header-card {
-            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
-            color: #ffffff;
-            border-radius: var(--radius-md);
-            padding: 24px;
-            margin-bottom: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: var(--shadow-md);
-        }
-        .dashboard-header-card h1 {
-            color: #ffffff;
-            font-size: 1.6rem;
-            margin-bottom: 4px;
-        }
-        .dashboard-header-card p {
-            color: #e8f5e9;
-            font-size: 0.95rem;
-        }
-        .seller-meta {
-            display: flex;
-            gap: 16px;
-            margin-top: 8px;
-            font-size: 0.85rem;
-            color: #c8e6c9;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/dashboard.css">
 </head>
 <body>
     <!-- Navbar -->
@@ -42,72 +14,215 @@
             <span class="logo-icon">🌾</span>
             <div>
                 MATIRA
-                <span class="subtext">Seller / Farmer Portal</span>
+                <span class="subtext">Farmer & Cooperative Portal</span>
             </div>
         </a>
         <div class="nav-user">
-            <span class="user-badge" id="navRoleBadge">Farmer</span>
+            <span class="user-badge" id="sellerRole">Farmer</span>
             <button id="logoutBtn" class="btn btn-secondary btn-sm">Logout</button>
         </div>
     </nav>
 
     <!-- Main Container -->
     <div class="container">
-        <!-- Welcome Banner -->
-        <div class="dashboard-header-card">
+        <!-- Hero Header -->
+        <div class="dashboard-hero">
             <div>
                 <h1>MATIRA Seller Dashboard</h1>
                 <p>Welcome, <strong id="sellerName">Farmer</strong></p>
-                <div class="seller-meta">
-                    <span>Role: <strong id="sellerRole">Farmer</strong></span>
-                    <span>•</span>
-                    <span>Phone: <strong id="sellerPhone">--</strong></span>
-                    <span>•</span>
-                    <span>Region: <strong id="sellerDistrict">--</strong></span>
+                <div class="seller-meta-tags">
+                    <span class="seller-meta-tag">📱 Phone: <strong id="sellerPhone">--</strong></span>
+                    <span class="seller-meta-tag">📍 Region: <strong id="sellerDistrict">--</strong></span>
                 </div>
             </div>
             <div>
-                <a href="#addProductSection" class="btn btn-secondary btn-sm">+ Add New Crop</a>
+                <button class="btn btn-secondary btn-sm" onclick="openAddProductModal()">
+                    + List New Crop
+                </button>
             </div>
         </div>
 
-        <!-- Section 1: My Products -->
-        <div class="card">
-            <div class="card-header">
-                <div>
-                    <h2>My Products <span id="productCount" style="font-size: 1rem; color: var(--text-muted); font-weight: normal;">(0)</span></h2>
-                    <p>Current active agricultural listings you are offering for sale</p>
+        <!-- KPI Metric Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-green">🌾</div>
+                <div class="kpi-info">
+                    <div class="kpi-label">Total Listings</div>
+                    <div class="kpi-value" id="kpiTotalProducts">0</div>
                 </div>
             </div>
-            
-            <div id="myProductsContainer">
-                <!-- Products loaded dynamically by js/seller.js -->
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-blue">✅</div>
+                <div class="kpi-info">
+                    <div class="kpi-label">Active For Sale</div>
+                    <div class="kpi-value" id="kpiActiveProducts">0</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-amber">📫</div>
+                <div class="kpi-info">
+                    <div class="kpi-label">Pending Requests</div>
+                    <div class="kpi-value" id="kpiPendingRequests">0</div>
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon kpi-purple">💰</div>
+                <div class="kpi-info">
+                    <div class="kpi-label">Sales Volume</div>
+                    <div class="kpi-value" id="kpiSalesVolume">৳0</div>
+                </div>
             </div>
         </div>
 
-        <!-- Section 2: Add Product Form -->
-        <div class="card" id="addProductSection">
-            <div class="card-header">
-                <div>
-                    <h2>Add New Product</h2>
-                    <p>List a new crop or bulk harvest to the MATIRA marketplace</p>
+        <!-- Dashboard Tabs Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-btn active" data-tab="tab-products">
+                🌾 My Products <span class="tab-badge" id="tabProductsCount">0</span>
+            </button>
+            <button class="tab-btn" data-tab="tab-requests">
+                📫 Incoming Purchase Requests <span class="tab-badge" id="tabRequestsCount">0</span>
+            </button>
+            <button class="tab-btn" data-tab="tab-history">
+                📜 Sales & Order History
+            </button>
+            <button class="tab-btn" data-tab="tab-profile">
+                👤 My Profile
+            </button>
+        </div>
+
+        <!-- TAB 1: Products -->
+        <div class="tab-pane active" id="tab-products">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Crop Inventory</h2>
+                        <p>Manage your listed crops, update quantities, edit prices, or remove listings</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="openAddProductModal()">+ Add New Product</button>
+                </div>
+
+                <!-- Search & Filters Toolbar -->
+                <div class="toolbar">
+                    <div class="search-box">
+                        <input type="text" id="searchProduct" placeholder="🔍 Search product or location..." oninput="filterProducts()">
+                    </div>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <select id="filterCategory" onchange="filterProducts()" style="width: auto;">
+                            <option value="">All Categories</option>
+                        </select>
+                        <select id="filterStatus" onchange="filterProducts()" style="width: auto;">
+                            <option value="">All Statuses</option>
+                            <option value="available">Available</option>
+                            <option value="sold_out">Sold Out</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Products Table Container -->
+                <div id="myProductsContainer">
+                    <!-- Loaded dynamically via js/seller.js -->
                 </div>
             </div>
+        </div>
 
-            <!-- Form alert -->
-            <div id="formAlert" style="display: none;"></div>
+        <!-- TAB 2: Incoming Requests -->
+        <div class="tab-pane" id="tab-requests">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Buyer Purchase Requests</h2>
+                        <p>Review purchase offers sent by local business buyers and accept or reject them</p>
+                    </div>
+                </div>
+
+                <div id="incomingRequestsContainer">
+                    <!-- Loaded dynamically via js/seller.js -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: Sales History -->
+        <div class="tab-pane" id="tab-history">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Sales & Transaction History</h2>
+                        <p>Track your agreed deals, fulfillment records, and sales transactions</p>
+                    </div>
+                </div>
+
+                <div id="salesHistoryContainer">
+                    <!-- Loaded dynamically via js/seller.js -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: Profile Settings -->
+        <div class="tab-pane" id="tab-profile">
+            <div class="card" style="max-width: 650px; margin: 0 auto;">
+                <div class="card-header">
+                    <div>
+                        <h2>Farmer Profile Settings</h2>
+                        <p>Update your personal and farm information</p>
+                    </div>
+                </div>
+
+                <div id="profileAlert" style="display: none;"></div>
+
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label for="prof_full_name">Full Name / Cooperative Name *</label>
+                        <input type="text" id="prof_full_name" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="prof_phone">Phone Number (Read-only)</label>
+                            <input type="text" id="prof_phone" disabled style="background-color: #f3f4f6;">
+                        </div>
+                        <div class="form-group">
+                            <label for="prof_email">Email Address</label>
+                            <input type="email" id="prof_email">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prof_district">District / Primary Region *</label>
+                        <input type="text" id="prof_district" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prof_address">Farm / Village Address</label>
+                        <textarea id="prof_address" placeholder="e.g. Village: Paba, Upazila: Paba, Rajshahi"></textarea>
+                    </div>
+
+                    <button type="submit" id="submitProfileBtn" class="btn btn-primary">
+                        Save Profile Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 1: Add Product Modal -->
+    <div class="modal-overlay" id="addProductModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>🌾 Add New Product Listing</h3>
+                <button class="modal-close" onclick="closeModal('addProductModal')">&times;</button>
+            </div>
+
+            <div id="addProductAlert" class="alert alert-danger" style="display: none;"></div>
 
             <form id="addProductForm">
                 <div class="form-row">
-                    <!-- Title -->
                     <div class="form-group" style="grid-column: span 2;">
-                        <label for="product_title">Product Title / Crop Name *</label>
-                        <input type="text" id="product_title" placeholder="e.g. Fresh Red Potato (Alu)" required>
+                        <label for="add_title">Product / Crop Title *</label>
+                        <input type="text" id="add_title" placeholder="e.g. Fresh Red Potato (Alu)" required>
                     </div>
-
-                    <!-- Category -->
                     <div class="form-group">
-                        <label for="category_id">Crop Category *</label>
+                        <label for="category_id">Category *</label>
                         <select id="category_id" required>
                             <option value="">Loading categories...</option>
                         </select>
@@ -115,15 +230,12 @@
                 </div>
 
                 <div class="form-row">
-                    <!-- Quantity -->
                     <div class="form-group">
                         <label for="quantity">Available Quantity *</label>
                         <input type="number" id="quantity" step="0.01" min="1" placeholder="e.g. 500" required>
                     </div>
-
-                    <!-- Unit -->
                     <div class="form-group">
-                        <label for="unit">Unit of Measure *</label>
+                        <label for="unit">Unit *</label>
                         <select id="unit" required>
                             <option value="kg" selected>Kilogram (kg)</option>
                             <option value="ton">Metric Ton</option>
@@ -132,44 +244,119 @@
                             <option value="crate">Crate</option>
                         </select>
                     </div>
+                </div>
 
-                    <!-- Price per unit -->
+                <div class="form-row">
                     <div class="form-group">
-                        <label for="price_per_unit">Asking Price per Unit (৳ BDT) *</label>
+                        <label for="price_per_unit">Price per Unit (৳ BDT) *</label>
                         <input type="number" id="price_per_unit" step="0.01" min="0.1" placeholder="e.g. 35.00" required>
                     </div>
-
-                    <!-- Minimum Order Quantity -->
                     <div class="form-group">
-                        <label for="min_order_quantity">Minimum Order Quantity *</label>
-                        <input type="number" id="min_order_quantity" step="0.01" min="1" placeholder="e.g. 10" value="10" required>
+                        <label for="min_order_quantity">Min Order Quantity *</label>
+                        <input type="number" id="min_order_quantity" step="0.01" min="1" value="10" required>
                     </div>
                 </div>
 
                 <div class="form-row">
-                    <!-- Location -->
                     <div class="form-group">
                         <label for="location">Location / District *</label>
                         <input type="text" id="location" placeholder="e.g. Rajshahi" required>
                     </div>
-
-                    <!-- Harvest Date -->
                     <div class="form-group">
                         <label for="harvest_date">Harvest Date (Optional)</label>
                         <input type="date" id="harvest_date">
                     </div>
                 </div>
 
-                <!-- Description -->
                 <div class="form-group">
-                    <label for="description">Product Description (Optional)</label>
-                    <textarea id="description" placeholder="Provide quality grading, packaging, or storage details..."></textarea>
+                    <label for="description">Product Description</label>
+                    <textarea id="description" placeholder="Quality grading, packaging, or storage details..."></textarea>
                 </div>
 
-                <!-- Submit Button -->
-                <button type="submit" id="submitProductBtn" class="btn btn-primary" style="padding: 12px 24px;">
-                    🌾 Add Product
-                </button>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('addProductModal')">Cancel</button>
+                    <button type="submit" id="submitAddProductBtn" class="btn btn-primary">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: Edit Product Modal -->
+    <div class="modal-overlay" id="editProductModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3>✏️ Edit Product Listing</h3>
+                <button class="modal-close" onclick="closeModal('editProductModal')">&times;</button>
+            </div>
+
+            <div id="editProductAlert" class="alert alert-danger" style="display: none;"></div>
+
+            <form id="editProductForm">
+                <input type="hidden" id="edit_product_id">
+
+                <div class="form-row">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label for="edit_title">Product / Crop Title *</label>
+                        <input type="text" id="edit_title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_category_id">Category *</label>
+                        <select id="edit_category_id" required></select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit_quantity">Available Quantity *</label>
+                        <input type="number" id="edit_quantity" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_unit">Unit *</label>
+                        <select id="edit_unit" required>
+                            <option value="kg">Kilogram (kg)</option>
+                            <option value="ton">Metric Ton</option>
+                            <option value="mon">Mon (40 kg)</option>
+                            <option value="bag">Bag / Sack</option>
+                            <option value="crate">Crate</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit_price_per_unit">Price per Unit (৳ BDT) *</label>
+                        <input type="number" id="edit_price_per_unit" step="0.01" min="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_min_order_quantity">Min Order Quantity *</label>
+                        <input type="number" id="edit_min_order_quantity" step="0.01" min="1" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit_location">Location / District *</label>
+                        <input type="text" id="edit_location" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit_status">Listing Status *</label>
+                        <select id="edit_status" required>
+                            <option value="available">Available</option>
+                            <option value="sold_out">Sold Out</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_description">Product Description</label>
+                    <textarea id="edit_description"></textarea>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editProductModal')">Cancel</button>
+                    <button type="submit" id="submitEditProductBtn" class="btn btn-primary">Update Product</button>
+                </div>
             </form>
         </div>
     </div>

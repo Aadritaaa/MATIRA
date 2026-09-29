@@ -202,8 +202,67 @@ const getCurrentUser = async (req, res, next) => {
     }
 };
 
+/**
+ * Update authenticated user profile
+ * PUT /api/auth/profile
+ */
+const updateProfile = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+        const { full_name, district, address, email } = req.body;
+
+        if (!full_name || !district) {
+            return res.status(400).json({
+                success: false,
+                message: 'Full name and district are required.'
+            });
+        }
+
+        // If updating email, check for conflicts
+        if (email && email.trim() !== '') {
+            const [conflict] = await db.query(
+                'SELECT id FROM users WHERE email = ? AND id != ?',
+                [email.trim(), userId]
+            );
+            if (conflict.length > 0) {
+                return res.status(409).json({
+                    success: false,
+                    message: 'Email address is already in use by another account.'
+                });
+            }
+        }
+
+        await db.query(
+            `UPDATE users 
+             SET full_name = ?, district = ?, address = ?, email = ?
+             WHERE id = ?`,
+            [
+                full_name.trim(),
+                district.trim(),
+                address ? address.trim() : null,
+                email && email.trim() !== '' ? email.trim() : null,
+                userId
+            ]
+        );
+
+        const [updatedUsers] = await db.query(
+            'SELECT id, full_name, phone, email, role, district, address, created_at FROM users WHERE id = ?',
+            [userId]
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: 'Profile updated successfully!',
+            user: updatedUsers[0]
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     register,
     login,
-    getCurrentUser
+    getCurrentUser,
+    updateProfile
 };
