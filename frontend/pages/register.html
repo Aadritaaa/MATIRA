@@ -13,13 +13,16 @@
         <a href="/pages/index.html" class="nav-brand">
             <span class="logo-icon">🌾</span>
             <div>
-                MATIRA
-                <span class="subtext">B2B Agricultural Marketplace</span>
+                <span data-i18n="brand.title">MATIRA</span>
+                <span class="subtext" data-i18n="brand.subtitle">Direct B2B Agricultural Marketplace</span>
             </div>
         </a>
-        <div class="nav-links">
-            <a href="/pages/index.html">Home</a>
-            <a href="/pages/login.html" class="btn btn-secondary btn-sm">Sign In</a>
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <div id="navLangContainer"></div>
+            <div class="nav-links">
+                <a href="/pages/index.html" data-i18n="nav.home">Home</a>
+                <a href="/pages/login.html" class="btn btn-secondary btn-sm" data-i18n="nav.signin">Sign In</a>
+            </div>
         </div>
     </nav>
 
@@ -27,9 +30,15 @@
     <div class="auth-wrapper">
         <div class="auth-card">
             <div class="auth-header">
-                <div class="logo-badge">🧑‍🌾</div>
-                <h1>Create MATIRA Account</h1>
-                <p>Register as a Farmer/Seller or a Local Business Buyer</p>
+                <div class="auth-brand-badge">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <path d="M12 8v4"/>
+                        <path d="M12 16h.01"/>
+                    </svg>
+                </div>
+                <h1 data-i18n="auth.register_title">Create MATIRA Account</h1>
+                <p data-i18n="auth.register_subtitle">Register as a Farmer/Seller or a Local Business Buyer</p>
             </div>
 
             <!-- Error alert -->
@@ -37,78 +46,75 @@
 
             <form id="registerForm">
                 <!-- Role Selection -->
-                <label>I want to register as:</label>
+                <label data-i18n="auth.role_prompt">I want to register as:</label>
                 <div class="role-selector">
                     <div class="role-option">
                         <input type="radio" id="roleFarmer" name="role" value="farmer" checked>
                         <label for="roleFarmer" class="role-card">
                             <span class="role-icon">🧑‍🌾</span>
-                            <span class="role-title">Farmer / Seller</span>
-                            <span class="role-desc">Sell bulk harvest</span>
+                            <span class="role-title" data-i18n="auth.role_farmer">Farmer / Seller</span>
+                            <span class="role-desc" data-i18n="auth.role_farmer_desc">Sell bulk harvest</span>
                         </label>
                     </div>
                     <div class="role-option">
                         <input type="radio" id="roleBuyer" name="role" value="buyer">
                         <label for="roleBuyer" class="role-card">
                             <span class="role-icon">🏪</span>
-                            <span class="role-title">Business Buyer</span>
-                            <span class="role-desc">Source farm produce</span>
+                            <span class="role-title" data-i18n="auth.role_buyer">Business Buyer</span>
+                            <span class="role-desc" data-i18n="auth.role_buyer_desc">Source farm produce</span>
                         </label>
                     </div>
                 </div>
 
                 <!-- Full Name -->
                 <div class="form-group">
-                    <label for="full_name">Full Name / Cooperative Name *</label>
-                    <input type="text" id="full_name" placeholder="e.g. Md. Abdul Karim" required>
+                    <label for="full_name" data-i18n="auth.fullname">Full Name / Cooperative Name *</label>
+                    <input type="text" id="full_name" placeholder="e.g. Md. Abdul Karim" data-i18n-placeholder="auth.fullname_placeholder" required>
                 </div>
 
                 <!-- Phone Number -->
                 <div class="form-group">
-                    <label for="phone">Mobile Phone Number *</label>
-                    <input type="tel" id="phone" placeholder="e.g. 01711000000" required>
+                    <label for="phone" data-i18n="auth.phone">Mobile Phone Number *</label>
+                    <input type="tel" id="phone" placeholder="e.g. 01711000000" data-i18n-placeholder="auth.phone_placeholder" required>
                 </div>
 
                 <!-- Email (Optional) -->
                 <div class="form-group">
-                    <label for="email">Email Address (Optional)</label>
+                    <label for="email" data-i18n="auth.email">Email Address (Optional)</label>
                     <input type="email" id="email" placeholder="e.g. abdul@example.com">
                 </div>
 
-                <!-- District / Location -->
+                <!-- District / Location (All 64 Districts) -->
                 <div class="form-group">
-                    <label for="district">District / Region *</label>
+                    <label for="district" data-i18n="auth.district">District / Region *</label>
                     <select id="district" required>
                         <option value="">-- Select District --</option>
-                        <option value="Rajshahi">Rajshahi</option>
-                        <option value="Bogura">Bogura</option>
-                        <option value="Rangpur">Rangpur</option>
-                        <option value="Dinajpur">Dinajpur</option>
-                        <option value="Dhaka">Dhaka</option>
-                        <option value="Faridpur">Faridpur</option>
-                        <option value="Jessore">Jessore</option>
-                        <option value="Kushtia">Kushtia</option>
-                        <option value="Mymensingh">Mymensingh</option>
-                        <option value="Chattogram">Chattogram</option>
-                        <option value="Sylhet">Sylhet</option>
-                        <option value="Barishal">Barishal</option>
-                        <option value="Khulna">Khulna</option>
                     </select>
                 </div>
 
                 <!-- Password -->
                 <div class="form-group">
-                    <label for="password">Password * (Min. 6 characters)</label>
+                    <label for="password" data-i18n="auth.password">Password * (Min. 6 characters)</label>
                     <input type="password" id="password" placeholder="Create a secure password" minlength="6" required>
                 </div>
 
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label for="confirm_password" data-i18n="auth.confirm_password">Confirm Password *</label>
+                    <input type="password" id="confirm_password" placeholder="Re-enter your password" data-i18n-placeholder="auth.confirm_password_placeholder" minlength="6" required>
+                </div>
+
                 <!-- Submit Button -->
-                <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                <button type="submit" class="btn btn-primary btn-block" data-i18n="auth.create_btn">Create Account</button>
             </form>
 
             <div class="auth-footer">
-                Already have an account? <a href="/pages/login.html">Sign In here</a>
+                <span data-i18n="auth.have_account">Already have an account?</span> 
+                <a href="/pages/login.html" data-i18n="auth.signin_link">Sign In here</a>
             </div>
+
+            <!-- Language preference switcher in card footer -->
+            <div style="margin-top: 14px; text-align: center;" id="langSelectorContainer"></div>
         </div>
     </div>
 
@@ -117,6 +123,8 @@
         <p>&copy; 2026 MATIRA Project — CSE 3200 Software Development Project II</p>
     </footer>
 
+    <script src="/js/districts.js"></script>
+    <script src="/js/i18n.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
 </body>

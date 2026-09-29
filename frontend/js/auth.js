@@ -98,6 +98,11 @@ const Auth = {
 
 // Initialize form event listeners if present on the page
 document.addEventListener('DOMContentLoaded', () => {
+    // Populate 64 Districts dropdown if present
+    if (typeof Districts !== 'undefined' && document.getElementById('district')) {
+        Districts.populateDropdown('district', '', '-- Select District --');
+    }
+
     // 1. Handle Registration Form
     const registerForm = document.getElementById('registerForm');
     if (registerForm) {
@@ -112,11 +117,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const phone = document.getElementById('phone').value.trim();
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
+            const confirm_password = document.getElementById('confirm_password')?.value;
             const district = document.getElementById('district').value.trim();
             const role = document.querySelector('input[name="role"]:checked')?.value || 'farmer';
 
             if (!full_name || !phone || !password || !district) {
                 showError(errorAlert, 'Please fill in all required fields.');
+                return;
+            }
+
+            // Password confirmation validation
+            if (confirm_password !== undefined && password !== confirm_password) {
+                const mismatchMsg = typeof i18n !== 'undefined' 
+                    ? i18n.t('auth.passwords_mismatch', 'Passwords do not match.') 
+                    : 'Passwords do not match.';
+                showError(errorAlert, mismatchMsg);
+                return;
+            }
+
+            if (password.length < 6) {
+                showError(errorAlert, 'Password must be at least 6 characters long.');
                 return;
             }
 
@@ -148,7 +168,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } finally {
                 if (submitBtn) {
                     submitBtn.disabled = false;
-                    submitBtn.textContent = 'Create Account';
+                    submitBtn.textContent = typeof i18n !== 'undefined' 
+                        ? i18n.t('auth.create_btn', 'Create Account') 
+                        : 'Create Account';
                 }
             }
         });
@@ -196,7 +218,9 @@ document.addEventListener('DOMContentLoaded', () => {
             } finally {
                 if (submitBtn) {
                     submitBtn.disabled = false;
-                    submitBtn.textContent = 'Sign In';
+                    submitBtn.textContent = typeof i18n !== 'undefined' 
+                        ? i18n.t('auth.signin_btn', 'Sign In') 
+                        : 'Sign In';
                 }
             }
         });
