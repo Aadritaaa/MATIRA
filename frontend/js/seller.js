@@ -1,5 +1,5 @@
 /**
- * MATIRA Seller Dashboard (Developer 1 - Full Implementation)
+ * MATIRA Seller Dashboard (Developer 1 - Enhanced & Refined)
  */
 
 let currentSeller = null;
@@ -15,10 +15,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 2. Initialize UI Components & Header Info
     renderSellerHeader(currentSeller);
 
-    // 3. Tab Switching Setup
+    // 3. Populate 64 Districts in District Dropdowns
+    if (typeof Districts !== 'undefined') {
+        Districts.populateDropdown('location', currentSeller.district || '', '-- Select Product District --');
+        Districts.populateDropdown('edit_location', '', '-- Select District --');
+        Districts.populateDropdown('prof_district', currentSeller.district || '', '-- Select Profile District --');
+    }
+
+    // 4. Tab Switching Setup
     setupTabs();
 
-    // 4. Setup Logout Button
+    // 5. Setup Logout Button
     const logoutBtn = document.getElementById('logoutBtn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', (e) => {
@@ -27,11 +34,28 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     }
 
-    // 5. Initial Data Loading
+    // 6. Unit synchronization (auto-set min_order_unit when unit changes)
+    const addUnitSelect = document.getElementById('unit');
+    const addMinUnitSelect = document.getElementById('min_order_unit');
+    if (addUnitSelect && addMinUnitSelect) {
+        addUnitSelect.addEventListener('change', () => {
+            addMinUnitSelect.value = addUnitSelect.value;
+        });
+    }
+
+    const editUnitSelect = document.getElementById('edit_unit');
+    const editMinUnitSelect = document.getElementById('edit_min_order_unit');
+    if (editUnitSelect && editMinUnitSelect) {
+        editUnitSelect.addEventListener('change', () => {
+            editMinUnitSelect.value = editUnitSelect.value;
+        });
+    }
+
+    // 7. Initial Data Loading
     await loadCategories();
     await refreshDashboard();
 
-    // 6. Setup Form Listeners & Modals
+    // 8. Setup Form Listeners & Modals
     setupProductForms();
     setupProfileForm();
 });
@@ -41,26 +65,22 @@ document.addEventListener('DOMContentLoaded', async () => {
  */
 function renderSellerHeader(user) {
     const nameEl = document.getElementById('sellerName');
-    const roleEl = document.getElementById('sellerRole');
     const phoneEl = document.getElementById('sellerPhone');
     const districtEl = document.getElementById('sellerDistrict');
 
     if (nameEl) nameEl.textContent = user.full_name || 'Farmer';
-    if (roleEl) roleEl.textContent = 'Farmer / Cooperative';
     if (phoneEl) phoneEl.textContent = user.phone || 'N/A';
     if (districtEl) districtEl.textContent = user.district || 'N/A';
 
-    // Also populate profile form fields
+    // Populate profile form fields
     const profName = document.getElementById('prof_full_name');
     const profPhone = document.getElementById('prof_phone');
     const profEmail = document.getElementById('prof_email');
-    const profDistrict = document.getElementById('prof_district');
     const profAddress = document.getElementById('prof_address');
 
     if (profName) profName.value = user.full_name || '';
     if (profPhone) profPhone.value = user.phone || '';
     if (profEmail) profEmail.value = user.email || '';
-    if (profDistrict) profDistrict.value = user.district || '';
     if (profAddress) profAddress.value = user.address || '';
 }
 
@@ -178,7 +198,9 @@ function renderProductsList(products) {
         return;
     }
 
-    const rows = products.map(p => `
+    const rows = products.map(p => {
+        const minOrderFormatted = `${Number(p.min_order_quantity).toLocaleString()} ${escapeHtml(p.min_order_unit || p.unit || 'kg')}`;
+        return `
         <tr>
             <td>
                 <strong>${escapeHtml(p.title)}</strong>
@@ -187,8 +209,8 @@ function renderProductsList(products) {
             <td><span class="badge badge-farmer">${escapeHtml(p.category_name || 'Crop')}</span></td>
             <td><strong>${Number(p.quantity).toLocaleString()}</strong> ${escapeHtml(p.unit)}</td>
             <td><strong>৳${Number(p.price_per_unit).toFixed(2)}</strong> / ${escapeHtml(p.unit)}</td>
-            <td>${Number(p.min_order_quantity).toLocaleString()} ${escapeHtml(p.unit)}</td>
-            <td>${escapeHtml(p.location)}</td>
+            <td>${minOrderFormatted}</td>
+            <td>📍 ${escapeHtml(p.location)}</td>
             <td>
                 <span class="badge badge-${p.status === 'available' ? 'available' : 'sold_out'}">
                     ${p.status}
@@ -201,7 +223,7 @@ function renderProductsList(products) {
                 </div>
             </td>
         </tr>
-    `).join('');
+    `;}).join('');
 
     container.innerHTML = `
         <div class="table-responsive">
@@ -213,7 +235,7 @@ function renderProductsList(products) {
                         <th>Stock Qty</th>
                         <th>Asking Price</th>
                         <th>Min Order</th>
-                        <th>Location</th>
+                        <th>District</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -235,7 +257,7 @@ function filterProducts() {
     const statusVal = document.getElementById('filterStatus')?.value || '';
 
     const filtered = allProducts.filter(p => {
-        const matchesSearch = p.title.toLowerCase().includes(searchVal) || p.location.toLowerCase().includes(searchVal);
+        const matchesSearch = p.title.toLowerCase().includes(searchVal) || (p.location && p.location.toLowerCase().includes(searchVal));
         const matchesCat = !categoryVal || String(p.category_id) === String(categoryVal);
         const matchesStatus = !statusVal || p.status === statusVal;
         return matchesSearch && matchesCat && matchesStatus;
@@ -459,9 +481,18 @@ function setupProductForms() {
             const unit = document.getElementById('unit').value;
             const price_per_unit = document.getElementById('price_per_unit').value;
             const min_order_quantity = document.getElementById('min_order_quantity').value || '1';
+            const min_order_unit = document.getElementById('min_order_unit')?.value || unit || 'kg';
             const location = document.getElementById('location').value.trim();
             const harvest_date = document.getElementById('harvest_date').value;
             const description = document.getElementById('description').value.trim();
+
+            if (!title || !category_id || !quantity || !price_per_unit || !location) {
+                if (alertEl) {
+                    alertEl.textContent = 'Please fill in all required fields.';
+                    alertEl.style.display = 'block';
+                }
+                return;
+            }
 
             try {
                 if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Saving...'; }
@@ -472,6 +503,7 @@ function setupProductForms() {
                     unit,
                     price_per_unit: parseFloat(price_per_unit),
                     min_order_quantity: parseFloat(min_order_quantity),
+                    min_order_unit,
                     location,
                     harvest_date: harvest_date || null,
                     description: description || null
@@ -511,6 +543,7 @@ function setupProductForms() {
             const unit = document.getElementById('edit_unit').value;
             const price_per_unit = document.getElementById('edit_price_per_unit').value;
             const min_order_quantity = document.getElementById('edit_min_order_quantity').value;
+            const min_order_unit = document.getElementById('edit_min_order_unit')?.value || unit || 'kg';
             const location = document.getElementById('edit_location').value.trim();
             const status = document.getElementById('edit_status').value;
             const description = document.getElementById('edit_description').value.trim();
@@ -524,6 +557,7 @@ function setupProductForms() {
                     unit,
                     price_per_unit: parseFloat(price_per_unit),
                     min_order_quantity: parseFloat(min_order_quantity),
+                    min_order_unit,
                     location,
                     status,
                     description: description || null
@@ -605,10 +639,9 @@ window.openAddProductModal = function() {
     if (alertEl) alertEl.style.display = 'none';
     if (modal) modal.classList.add('active');
 
-    // Pre-fill location default with seller's district
-    const loc = document.getElementById('location');
-    if (loc && currentSeller && currentSeller.district) {
-        loc.value = currentSeller.district;
+    // Pre-fill location default with seller's district in 64 districts dropdown
+    if (typeof Districts !== 'undefined' && currentSeller && currentSeller.district) {
+        Districts.populateDropdown('location', currentSeller.district, '-- Select Product District --');
     }
 };
 
@@ -628,10 +661,16 @@ window.openEditProductModal = async function(productId) {
             document.getElementById('edit_title').value = p.title;
             document.getElementById('edit_category_id').value = p.category_id;
             document.getElementById('edit_quantity').value = p.quantity;
-            document.getElementById('edit_unit').value = p.unit;
+            document.getElementById('edit_unit').value = p.unit || 'kg';
             document.getElementById('edit_price_per_unit').value = p.price_per_unit;
             document.getElementById('edit_min_order_quantity').value = p.min_order_quantity;
-            document.getElementById('edit_location').value = p.location;
+            document.getElementById('edit_min_order_unit').value = p.min_order_unit || p.unit || 'kg';
+            
+            // Populate district in edit dropdown
+            if (typeof Districts !== 'undefined') {
+                Districts.populateDropdown('edit_location', p.location || '', '-- Select District --');
+            }
+
             document.getElementById('edit_status').value = p.status;
             document.getElementById('edit_description').value = p.description || '';
 

@@ -13,13 +13,16 @@
         <a href="/pages/index.html" class="nav-brand">
             <span class="logo-icon">🌾</span>
             <div>
-                MATIRA
-                <span class="subtext">Farmer & Cooperative Portal</span>
+                <span data-i18n="brand.title">MATIRA</span>
+                <span class="subtext" data-i18n="dashboard.role">Farmer & Cooperative Portal</span>
             </div>
         </a>
-        <div class="nav-user">
-            <span class="user-badge" id="sellerRole">Farmer</span>
-            <button id="logoutBtn" class="btn btn-secondary btn-sm">Logout</button>
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <div id="navLangContainer"></div>
+            <div class="nav-user">
+                <span class="user-badge" id="sellerRoleBadge" data-i18n="dashboard.role">Farmer</span>
+                <button id="logoutBtn" class="btn btn-secondary btn-sm" data-i18n="nav.logout">Logout</button>
+            </div>
         </div>
     </nav>
 
@@ -28,7 +31,7 @@
         <!-- Hero Header -->
         <div class="dashboard-hero">
             <div>
-                <h1>MATIRA Seller Dashboard</h1>
+                <h1 data-i18n="dashboard.title">MATIRA Seller Dashboard</h1>
                 <p>Welcome, <strong id="sellerName">Farmer</strong></p>
                 <div class="seller-meta-tags">
                     <span class="seller-meta-tag">📱 Phone: <strong id="sellerPhone">--</strong></span>
@@ -36,7 +39,7 @@
                 </div>
             </div>
             <div>
-                <button class="btn btn-secondary btn-sm" onclick="openAddProductModal()">
+                <button class="btn btn-secondary btn-sm" onclick="openAddProductModal()" data-i18n="dashboard.add_crop">
                     + List New Crop
                 </button>
             </div>
@@ -47,28 +50,28 @@
             <div class="kpi-card">
                 <div class="kpi-icon kpi-green">🌾</div>
                 <div class="kpi-info">
-                    <div class="kpi-label">Total Listings</div>
+                    <div class="kpi-label" data-i18n="dashboard.kpi_total">Total Listings</div>
                     <div class="kpi-value" id="kpiTotalProducts">0</div>
                 </div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-icon kpi-blue">✅</div>
                 <div class="kpi-info">
-                    <div class="kpi-label">Active For Sale</div>
+                    <div class="kpi-label" data-i18n="dashboard.kpi_active">Active For Sale</div>
                     <div class="kpi-value" id="kpiActiveProducts">0</div>
                 </div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-icon kpi-amber">📫</div>
                 <div class="kpi-info">
-                    <div class="kpi-label">Pending Requests</div>
+                    <div class="kpi-label" data-i18n="dashboard.kpi_pending">Pending Requests</div>
                     <div class="kpi-value" id="kpiPendingRequests">0</div>
                 </div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-icon kpi-purple">💰</div>
                 <div class="kpi-info">
-                    <div class="kpi-label">Sales Volume</div>
+                    <div class="kpi-label" data-i18n="dashboard.kpi_sales">Sales Volume</div>
                     <div class="kpi-value" id="kpiSalesVolume">৳0</div>
                 </div>
             </div>
@@ -77,16 +80,16 @@
         <!-- Dashboard Tabs Navigation -->
         <div class="tab-navigation">
             <button class="tab-btn active" data-tab="tab-products">
-                🌾 My Products <span class="tab-badge" id="tabProductsCount">0</span>
+                <span data-i18n="dashboard.tab_products">🌾 My Products</span> <span class="tab-badge" id="tabProductsCount">0</span>
             </button>
             <button class="tab-btn" data-tab="tab-requests">
-                📫 Incoming Purchase Requests <span class="tab-badge" id="tabRequestsCount">0</span>
+                <span data-i18n="dashboard.tab_requests">📫 Incoming Purchase Requests</span> <span class="tab-badge" id="tabRequestsCount">0</span>
             </button>
             <button class="tab-btn" data-tab="tab-history">
-                📜 Sales & Order History
+                <span data-i18n="dashboard.tab_history">📜 Sales & Order History</span>
             </button>
             <button class="tab-btn" data-tab="tab-profile">
-                👤 My Profile
+                <span data-i18n="dashboard.tab_profile">👤 My Profile</span>
             </button>
         </div>
 
@@ -104,7 +107,7 @@
                 <!-- Search & Filters Toolbar -->
                 <div class="toolbar">
                     <div class="search-box">
-                        <input type="text" id="searchProduct" placeholder="🔍 Search product or location..." oninput="filterProducts()">
+                        <input type="text" id="searchProduct" placeholder="🔍 Search product or district..." oninput="filterProducts()">
                     </div>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                         <select id="filterCategory" onchange="filterProducts()" style="width: auto;">
@@ -187,14 +190,17 @@
                         </div>
                     </div>
 
+                    <!-- 64 Districts Dropdown for Profile -->
                     <div class="form-group">
                         <label for="prof_district">District / Primary Region *</label>
-                        <input type="text" id="prof_district" required>
+                        <select id="prof_district" required>
+                            <option value="">-- Select District --</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
                         <label for="prof_address">Farm / Village Address</label>
-                        <textarea id="prof_address" placeholder="e.g. Village: Paba, Upazila: Paba, Rajshahi"></textarea>
+                        <textarea id="prof_address" placeholder="e.g. Village: Mokamtala, Upazila: Shibganj, Bogura"></textarea>
                     </div>
 
                     <button type="submit" id="submitProfileBtn" class="btn btn-primary">
@@ -230,38 +236,64 @@
                 </div>
 
                 <div class="form-row">
+                    <!-- Quantity + Unit (Number + Dropdown with Gram) -->
                     <div class="form-group">
                         <label for="quantity">Available Quantity *</label>
-                        <input type="number" id="quantity" step="0.01" min="1" placeholder="e.g. 500" required>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" id="quantity" step="0.01" min="0.01" placeholder="e.g. 500" style="flex: 2;" required>
+                            <select id="unit" style="flex: 1.2;" required>
+                                <option value="kg" selected>kg</option>
+                                <option value="gram">gram</option>
+                                <option value="ton">ton</option>
+                                <option value="mon">mon (40kg)</option>
+                                <option value="bag">bag</option>
+                                <option value="crate">crate</option>
+                                <option value="piece">piece</option>
+                                <option value="liter">liter</option>
+                                <option value="dozen">dozen</option>
+                                <option value="bundle">bundle</option>
+                            </select>
+                        </div>
                     </div>
+
+                    <!-- Minimum Order Quantity (Number + Unit Dropdown) -->
                     <div class="form-group">
-                        <label for="unit">Unit *</label>
-                        <select id="unit" required>
-                            <option value="kg" selected>Kilogram (kg)</option>
-                            <option value="ton">Metric Ton</option>
-                            <option value="mon">Mon (40 kg)</option>
-                            <option value="bag">Bag / Sack</option>
-                            <option value="crate">Crate</option>
+                        <label for="min_order_quantity">Minimum Order Quantity *</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" id="min_order_quantity" step="0.01" min="0.01" placeholder="e.g. 10" value="10" style="flex: 2;" required>
+                            <select id="min_order_unit" style="flex: 1.2;" required>
+                                <option value="kg" selected>kg</option>
+                                <option value="gram">gram</option>
+                                <option value="ton">ton</option>
+                                <option value="mon">mon (40kg)</option>
+                                <option value="bag">bag</option>
+                                <option value="crate">crate</option>
+                                <option value="piece">piece</option>
+                                <option value="liter">liter</option>
+                                <option value="dozen">dozen</option>
+                                <option value="bundle">bundle</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <!-- Price per Unit -->
+                    <div class="form-group">
+                        <label for="price_per_unit">Asking Price per Unit (৳ BDT) *</label>
+                        <input type="number" id="price_per_unit" step="0.01" min="0.01" placeholder="e.g. 35.00" required>
+                    </div>
+
+                    <!-- Location: 64 Districts Dropdown -->
+                    <div class="form-group">
+                        <label for="location">District / Location *</label>
+                        <select id="location" required>
+                            <option value="">-- Select District --</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="price_per_unit">Price per Unit (৳ BDT) *</label>
-                        <input type="number" id="price_per_unit" step="0.01" min="0.1" placeholder="e.g. 35.00" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="min_order_quantity">Min Order Quantity *</label>
-                        <input type="number" id="min_order_quantity" step="0.01" min="1" value="10" required>
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="location">Location / District *</label>
-                        <input type="text" id="location" placeholder="e.g. Rajshahi" required>
-                    </div>
                     <div class="form-group">
                         <label for="harvest_date">Harvest Date (Optional)</label>
                         <input type="date" id="harvest_date">
@@ -270,7 +302,7 @@
 
                 <div class="form-group">
                     <label for="description">Product Description</label>
-                    <textarea id="description" placeholder="Quality grading, packaging, or storage details..."></textarea>
+                    <textarea id="description" placeholder="Quality grading, variety (e.g. Diamant/Cardinal), packaging, or storage details..."></textarea>
                 </div>
 
                 <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px;">
@@ -306,38 +338,63 @@
                 </div>
 
                 <div class="form-row">
+                    <!-- Edit Quantity + Unit -->
                     <div class="form-group">
                         <label for="edit_quantity">Available Quantity *</label>
-                        <input type="number" id="edit_quantity" step="0.01" min="0" required>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" id="edit_quantity" step="0.01" min="0.01" style="flex: 2;" required>
+                            <select id="edit_unit" style="flex: 1.2;" required>
+                                <option value="kg">kg</option>
+                                <option value="gram">gram</option>
+                                <option value="ton">ton</option>
+                                <option value="mon">mon (40kg)</option>
+                                <option value="bag">bag</option>
+                                <option value="crate">crate</option>
+                                <option value="piece">piece</option>
+                                <option value="liter">liter</option>
+                                <option value="dozen">dozen</option>
+                                <option value="bundle">bundle</option>
+                            </select>
+                        </div>
                     </div>
+
+                    <!-- Edit Minimum Order Quantity + Unit -->
                     <div class="form-group">
-                        <label for="edit_unit">Unit *</label>
-                        <select id="edit_unit" required>
-                            <option value="kg">Kilogram (kg)</option>
-                            <option value="ton">Metric Ton</option>
-                            <option value="mon">Mon (40 kg)</option>
-                            <option value="bag">Bag / Sack</option>
-                            <option value="crate">Crate</option>
-                        </select>
+                        <label for="edit_min_order_quantity">Min Order Quantity *</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="number" id="edit_min_order_quantity" step="0.01" min="0.01" style="flex: 2;" required>
+                            <select id="edit_min_order_unit" style="flex: 1.2;" required>
+                                <option value="kg">kg</option>
+                                <option value="gram">gram</option>
+                                <option value="ton">ton</option>
+                                <option value="mon">mon (40kg)</option>
+                                <option value="bag">bag</option>
+                                <option value="crate">crate</option>
+                                <option value="piece">piece</option>
+                                <option value="liter">liter</option>
+                                <option value="dozen">dozen</option>
+                                <option value="bundle">bundle</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="edit_price_per_unit">Price per Unit (৳ BDT) *</label>
-                        <input type="number" id="edit_price_per_unit" step="0.01" min="0.1" required>
+                        <input type="number" id="edit_price_per_unit" step="0.01" min="0.01" required>
                     </div>
+
+                    <!-- Edit Location: 64 Districts Dropdown -->
                     <div class="form-group">
-                        <label for="edit_min_order_quantity">Min Order Quantity *</label>
-                        <input type="number" id="edit_min_order_quantity" step="0.01" min="1" required>
+                        <label for="edit_location">District / Location *</label>
+                        <select id="edit_location" required>
+                            <option value="">-- Select District --</option>
+                        </select>
                     </div>
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="edit_location">Location / District *</label>
-                        <input type="text" id="edit_location" required>
-                    </div>
                     <div class="form-group">
                         <label for="edit_status">Listing Status *</label>
                         <select id="edit_status" required>
@@ -366,6 +423,8 @@
         <p>&copy; 2026 MATIRA Project — CSE 3200 Software Development Project II</p>
     </footer>
 
+    <script src="/js/districts.js"></script>
+    <script src="/js/i18n.js"></script>
     <script src="/js/api.js"></script>
     <script src="/js/auth.js"></script>
     <script src="/js/seller.js"></script>
