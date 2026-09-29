@@ -15,6 +15,7 @@ const createProduct = async (req, res, next) => {
             unit = 'kg',
             price_per_unit,
             min_order_quantity = 1,
+            min_order_unit,
             location,
             harvest_date,
             image_url
@@ -31,6 +32,8 @@ const createProduct = async (req, res, next) => {
         const numQuantity = parseFloat(quantity);
         const numPrice = parseFloat(price_per_unit);
         const numMinOrder = parseFloat(min_order_quantity) || 1;
+        const cleanUnit = (unit || 'kg').trim();
+        const cleanMinOrderUnit = (min_order_unit || cleanUnit || 'kg').trim();
 
         if (isNaN(numQuantity) || numQuantity <= 0) {
             return res.status(400).json({
@@ -46,6 +49,13 @@ const createProduct = async (req, res, next) => {
             });
         }
 
+        if (isNaN(numMinOrder) || numMinOrder <= 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Minimum order quantity must be a positive number.'
+            });
+        }
+
         // Validate Category exists
         const [categories] = await db.query('SELECT id FROM categories WHERE id = ?', [category_id]);
         if (categories.length === 0) {
@@ -58,17 +68,18 @@ const createProduct = async (req, res, next) => {
         // Insert product
         const [result] = await db.query(
             `INSERT INTO products 
-             (seller_id, category_id, title, description, quantity, unit, price_per_unit, min_order_quantity, location, harvest_date, image_url, status)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'available')`,
+             (seller_id, category_id, title, description, quantity, unit, price_per_unit, min_order_quantity, min_order_unit, location, harvest_date, image_url, status)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'available')`,
             [
                 sellerId,
                 category_id,
                 title.trim(),
                 description ? description.trim() : null,
                 numQuantity,
-                unit,
+                cleanUnit,
                 numPrice,
                 numMinOrder,
+                cleanMinOrderUnit,
                 location.trim(),
                 harvest_date || null,
                 image_url ? image_url.trim() : null
@@ -191,6 +202,7 @@ const updateProduct = async (req, res, next) => {
             unit,
             price_per_unit,
             min_order_quantity,
+            min_order_unit,
             location,
             harvest_date,
             status,
@@ -218,6 +230,18 @@ const updateProduct = async (req, res, next) => {
             }
         }
 
+        if (quantity !== undefined && (isNaN(parseFloat(quantity)) || parseFloat(quantity) <= 0)) {
+            return res.status(400).json({ success: false, message: 'Quantity must be a positive number.' });
+        }
+
+        if (price_per_unit !== undefined && (isNaN(parseFloat(price_per_unit)) || parseFloat(price_per_unit) <= 0)) {
+            return res.status(400).json({ success: false, message: 'Price per unit must be a positive number.' });
+        }
+
+        if (min_order_quantity !== undefined && (isNaN(parseFloat(min_order_quantity)) || parseFloat(min_order_quantity) <= 0)) {
+            return res.status(400).json({ success: false, message: 'Minimum order quantity must be a positive number.' });
+        }
+
         await db.query(
             `UPDATE products
              SET title = COALESCE(?, title),
@@ -227,6 +251,7 @@ const updateProduct = async (req, res, next) => {
                  unit = COALESCE(?, unit),
                  price_per_unit = COALESCE(?, price_per_unit),
                  min_order_quantity = COALESCE(?, min_order_quantity),
+                 min_order_unit = COALESCE(?, min_order_unit),
                  location = COALESCE(?, location),
                  harvest_date = COALESCE(?, harvest_date),
                  status = COALESCE(?, status),
@@ -236,10 +261,11 @@ const updateProduct = async (req, res, next) => {
                 title ? title.trim() : null,
                 description !== undefined ? description : null,
                 category_id || null,
-                quantity ? parseFloat(quantity) : null,
-                unit || null,
-                price_per_unit ? parseFloat(price_per_unit) : null,
-                min_order_quantity ? parseFloat(min_order_quantity) : null,
+                quantity !== undefined ? parseFloat(quantity) : null,
+                unit ? unit.trim() : null,
+                price_per_unit !== undefined ? parseFloat(price_per_unit) : null,
+                min_order_quantity !== undefined ? parseFloat(min_order_quantity) : null,
+                min_order_unit ? min_order_unit.trim() : null,
                 location ? location.trim() : null,
                 harvest_date || null,
                 status || null,
