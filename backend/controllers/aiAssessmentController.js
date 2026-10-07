@@ -1,6 +1,18 @@
 const db = require('../config/db');
 const { assessPrice, convertPrice } = require('../services/aiAssessmentService');
 
+// The ai_assessments.deal_rating column is an enum, so map the readable
+// labels used by the API to the values stored in the database (and back).
+const RATING_TO_DB = {
+  'Fair Market Value': 'Fair',
+  'Favorable to Buyer': 'Favorable_Buyer',
+  'Favorable to Seller': 'Favorable_Seller',
+  'Out of Normal Range': 'Out_Of_Range',
+};
+const DB_TO_RATING = Object.fromEntries(
+  Object.entries(RATING_TO_DB).map(([label, dbValue]) => [dbValue, label])
+);
+
 async function findReference(name, region) {
   const [rows] = await db.query(
     `SELECT * FROM price_references
@@ -11,11 +23,15 @@ async function findReference(name, region) {
   );
   if (!rows.length) return null;
 
+  // Same commodity only (first match), then prefer the exact region
   const same = rows.filter(r => r.commodity_name === rows[0].commodity_name);
-  const exact = same.find(r => r.market_region.toLowerCase() === String(region || '').toLowerCase());
+  const exact = same.find(
+    r => r.market_region.toLowerCase() === String(region || '').toLowerCase()
+  );
   if (exact) return exact;
   if (same.length === 1) return same[0];
 
+  // No exact region: use the average across regions
   const avg = f => same.reduce((s, r) => s + Number(r[f]), 0) / same.length;
   return {
     ...same[0],
@@ -44,25 +60,37 @@ exports.evaluate = async (req, res, next) => {
     let { commodity_name, market_region, unit, product_id, offered_price_per_unit } = req.body;
 
     if (product_id) {
-      const [p] = await db.query('SELECT title, location, unit FROM products WHERE id = ?', [product_id]);
+      const [p] = await db.query(
+        'SELECT title, location, unit FROM products WHERE id = ?', [product_id]);
       if (!p.length) return res.status(404).json({ message: 'Product not found' });
       commodity_name = p[0].title;
       market_region = market_region || p[0].location;
       unit = unit || p[0].unit;
     }
     if (!commodity_name || offered_price_per_unit === undefined) {
-      return res.status(400).json({ message: 'commodity_name (or product_id) and offered_price_per_unit are required' });
+      return res.status(400).json({
+        message: 'commodity_name (or product_id) and offered_price_per_unit are required',
+      });
     }
 
     const ref = await findReference(commodity_name, market_region);
-    if (!ref) return res.status(404).json({ message: `No reference price found for "${commodity_name}"` });
+    if (!ref) {
+      return res.status(404).json({ message: `No reference price found for "${commodity_name}"` });
+    }
 
     const { result, error } = assessWithUnits(offered_price_per_unit, unit, ref);
     if (error) return res.status(422).json({ message: error });
 
-    res.json({ commodity_name: ref.commodity_name, market_region: ref.market_region, unit: ref.unit, ...result });
+    res.json({
+      commodity_name: ref.commodity_name,
+      market_region: ref.market_region,
+      unit: ref.unit,
+      ...result,
+    });
   } catch (err) {
-    if (err.message.includes('Offered price')) return res.status(400).json({ message: err.message });
+    if (err.message.includes('Offered price')) {
+      return res.status(400).json({ message: err.message });
+    }
     next(err);
   }
 };
@@ -78,17 +106,24 @@ exports.getForRequest = async (req, res, next) => {
     if (!reqRows.length) return res.status(404).json({ message: 'Purchase request not found' });
     const pr = reqRows[0];
 
+    // Only the buyer, the seller, or an admin may view it
     const uid = req.user.id;
     if (req.user.role !== 'admin' && uid !== pr.buyer_id && uid !== pr.seller_id) {
       return res.status(403).json({ message: 'Not allowed to view this assessment' });
     }
 
+    // Return the saved assessment if it exists
     const [existing] = await db.query(
       'SELECT * FROM ai_assessments WHERE request_id = ? ORDER BY id DESC LIMIT 1', [requestId]);
-    if (existing.length) return res.json(existing[0]);
+    if (existing.length) {
+      return res.json({ ...existing[0], deal_rating: DB_TO_RATING[existing[0].deal_rating] });
+    }
 
+    // Otherwise compute and save it
     const ref = await findReference(pr.title, pr.location);
-    if (!ref) return res.status(404).json({ message: `No reference price found for "${pr.title}"` });
+    if (!ref) {
+      return res.status(404).json({ message: `No reference price found for "${pr.title}"` });
+    }
 
     const { result: a, error } = assessWithUnits(pr.offered_price_per_unit, pr.unit, ref);
     if (error) return res.status(422).json({ message: error });
@@ -97,7 +132,8 @@ exports.getForRequest = async (req, res, next) => {
       `INSERT INTO ai_assessments
        (request_id, market_reference_price, variance_percentage, deal_rating, recommendation_summary)
        VALUES (?, ?, ?, ?, ?)`,
-      [requestId, a.market_reference_price, a.variance_percentage, a.deal_rating, a.recommendation_summary]);
+      [requestId, a.market_reference_price, a.variance_percentage,
+       RATING_TO_DB[a.deal_rating], a.recommendation_summary]);
 
     res.status(201).json({ id: ins.insertId, request_id: Number(requestId), ...a });
   } catch (err) { next(err); }
@@ -116,3 +152,6 @@ exports.getReferencePrices = async (req, res, next) => {
     res.json(rows);
   } catch (err) { next(err); }
 };
+
+// Exported so dealController can translate stored ratings back to labels
+exports.DB_TO_RATING = DB_TO_RATING;
