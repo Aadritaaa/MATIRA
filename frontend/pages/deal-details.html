@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deal Details — MATIRA</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <style>
+        .deal-top { margin: 8px 0 16px; }
+        .deal-top a { text-decoration: none; color: #2e7d32; font-weight: 600; }
+        .deal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .deal-wide { grid-column: 1 / -1; }
+        .deal-card { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 18px; }
+        .deal-card h2, .deal-card h3 { margin: 0 0 10px; }
+        .deal-muted { color: #777; font-size: 0.9rem; }
+        .deal-status-pill { display: inline-block; background: #e8f5e9; color: #2e7d32; padding: 3px 12px; border-radius: 99px; font-weight: 600; margin: 0 0 12px; }
+        .deal-dl { display: grid; grid-template-columns: 130px 1fr; gap: 6px 10px; margin: 0; }
+        .deal-dl dt { color: #777; } .deal-dl dd { margin: 0; }
+        .deal-timeline { list-style: none; padding: 0; margin: 0 0 14px; }
+        .deal-timeline li { padding: 6px 0 6px 26px; position: relative; color: #999; }
+        .deal-timeline .dot { position: absolute; left: 4px; top: 11px; width: 12px; height: 12px; border-radius: 50%; background: #ccc; }
+        .deal-timeline li.done { color: #2e7d32; } .deal-timeline li.done .dot { background: #2e7d32; }
+        .deal-timeline li.current { color: #111; font-weight: 700; } .deal-timeline li.current .dot { background: #f9a825; }
+        .deal-cancelled { background: #ffebee; color: #c62828; padding: 10px; border-radius: 8px; margin-bottom: 14px; }
+        .deal-btn { background: #2e7d32; color: #fff; border: 0; padding: 9px 16px; border-radius: 8px; cursor: pointer; font-size: 0.95rem; margin: 4px 6px 4px 0; }
+        .deal-btn-danger { background: #c62828; }
+        #dealError { display: none; background: #ffebee; color: #c62828; padding: 10px 14px; border-radius: 8px; margin-bottom: 14px; }
+        .ai-badge { display: inline-block; padding: 5px 14px; border-radius: 99px; font-weight: 700; margin-bottom: 12px; }
+        .ai-fair { background: #e8f5e9; color: #2e7d32; } .ai-buyer { background: #e3f2fd; color: #1565c0; }
+        .ai-seller { background: #fff3e0; color: #e65100; } .ai-range { background: #ffebee; color: #c62828; }
+        .ai-stats { display: flex; gap: 32px; margin-bottom: 14px; } .ai-stats div { display: flex; flex-direction: column; }
+        .ai-gauge { position: relative; height: 12px; background: #eee; border-radius: 6px; }
+        .ai-band { position: absolute; left: 30%; width: 40%; top: 0; bottom: 0; background: #c8e6c9; }
+        .ai-marker { position: absolute; top: -4px; width: 4px; height: 20px; background: #111; border-radius: 2px; transform: translateX(-50%); }
+        .ai-scale { display: flex; justify-content: space-between; font-size: 0.8rem; color: #777; margin-top: 6px; }
+        .ai-summary { margin: 14px 0 6px; }
+        @media (max-width: 720px) { .deal-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/pages/index.html" class="nav-brand">
+            <span class="logo-icon">🌾</span>
+            <div>
+                <span data-i18n="brand.title">MATIRA</span>
+                <span class="subtext" id="dealSubtext">Deal Details</span>
+            </div>
+        </a>
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <div id="navLangContainer"></div>
+            <div class="nav-user">
+                <span class="user-badge" id="dealRoleBadge">User</span>
+                <button id="logoutBtn" class="btn btn-secondary btn-sm" data-i18n="nav.logout">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="deal-top"><a id="dealBack" href="/pages/index.html">← Back</a></div>
+        <div id="dealError"></div>
+        <div id="dealRoot"><p class="deal-muted">Loading deal…</p></div>
+    </div>
+
+    <script src="/js/i18n.js"></script>
+    <script src="/js/deals-i18n.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ai-assessment.js"></script>
+    <script src="/js/deals.js"></script>
+</body>
+</html>
+
