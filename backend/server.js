@@ -34,6 +34,8 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/seller', sellerRoutes);
 app.use('/api/categories', categoryRoutes);
+app.use('/api/assessment', require('./routes/aiRoutes'));
+app.use('/api/deals', require('./routes/dealRoutes'));
 
 // Catch 404 for undefined API routes
 app.use('/api/*', (req, res) => {
