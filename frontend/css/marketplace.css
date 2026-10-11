@@ -1,0 +1,21 @@
+.mp-container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+.mp-filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+.mp-filters input, .mp-filters select { padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; }
+.mp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.product-card { border: 1px solid #e0e0e0; border-radius: 10px; padding: 16px; background: #fff; }
+.product-card h3 { margin: 0 0 6px; }
+.product-card .price { color: #2e7d32; font-weight: bold; font-size: 1.1rem; }
+.product-card .meta { color: #666; font-size: .9rem; margin: 4px 0; }
+.product-card a.btn, .mp-btn { display: inline-block; margin-top: 10px; padding: 8px 14px; background: #2e7d32; color: #fff; border: 0; border-radius: 6px; cursor: pointer; text-decoration: none; }
+.mp-btn.danger { background: #c62828; }
+.mp-detail { background: #fff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 20px; margin-bottom: 20px; }
+.mp-form label { display: block; margin-top: 10px; font-weight: 600; }
+.mp-form input, .mp-form textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+.mp-msg { margin: 10px 0; padding: 10px; border-radius: 6px; display: none; }
+.mp-msg.ok { display: block; background: #e8f5e9; color: #2e7d32; }
+.mp-msg.err { display: block; background: #ffebee; color: #c62828; }
+.mp-table { width: 100%; border-collapse: collapse; background: #fff; }
+.mp-table th, .mp-table td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+.badge { padding: 3px 8px; border-radius: 12px; font-size: .8rem; background: #eee; }
+.badge.pending { background: #fff3cd; } .badge.accepted { background: #d4edda; }
+.badge.rejected, .badge.cancelled { background: #f8d7da; }
