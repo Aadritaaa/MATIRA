@@ -35,7 +35,7 @@ app.get('/api/health', (req, res) => {
 // Mount Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/seller', sellerRoutes);
-app.use('/api', require('./routes/buyerRoutes')); // Buyer + marketplace routes// Buyer routes
+app.use('/api', require('./routes/buyerRoutes')); // Buyer + marketplace routesgit add backend/server.js// Buyer routes
 app.use('/api/categories', categoryRoutes);
 app.use('/api/assessment', require('./routes/aiRoutes'));
 app.use('/api/deals', require('./routes/dealRoutes'));
