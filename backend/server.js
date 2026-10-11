@@ -8,6 +8,7 @@ const errorHandler = require('./middleware/errorHandler');
 // Route imports
 const authRoutes = require('./routes/authRoutes');
 const sellerRoutes = require('./routes/sellerRoutes');
+
 const categoryRoutes = require('./routes/categoryRoutes');
 
 const app = express();
@@ -17,6 +18,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 // Serve static frontend files
 app.use(express.static(path.join(__dirname, '../frontend')));
@@ -33,6 +35,7 @@ app.get('/api/health', (req, res) => {
 // Mount Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/seller', sellerRoutes);
+app.use('/api/buyer', require('./routes/buyerRoutes')); // Buyer routes
 app.use('/api/categories', categoryRoutes);
 app.use('/api/assessment', require('./routes/aiRoutes'));
 app.use('/api/deals', require('./routes/dealRoutes'));
