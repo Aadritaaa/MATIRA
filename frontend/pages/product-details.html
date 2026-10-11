@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Product Details - MATIRA</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/marketplace.css">
 </head>
 <body>
   <div class="mp-container">
-    <p><a href="marketplace.html">← Back to marketplace</a></p>
+    <p><a href="marketplace.html">← Back to marketplace</a> | <a href="buyer-dashboard.html">My Requests</a></p>
+
     <div id="productDetail" class="mp-detail">Loading...</div>
 
     <div class="mp-detail">
@@ -17,14 +19,25 @@
       <form id="requestForm" class="mp-form">
         <label for="quantity">Quantity</label>
         <input id="quantity" type="number" step="any" required>
+
         <label for="offered_price">Offered price per unit</label>
         <input id="offered_price" type="number" step="any">
-        <label for="message">Message to seller (optional)</label>
+
+        <label for="delivery_location">Delivery location</label>
+        <input id="delivery_location" required>
+
+        <label for="delivery_deadline">Delivery deadline (optional)</label>
+        <input id="delivery_deadline" type="date">
+
+        <label for="message">Notes to seller (optional)</label>
         <textarea id="message" rows="3"></textarea>
+
+        <p id="totalPreview" class="meta"></p>
         <button class="mp-btn" type="submit">Send request</button>
       </form>
     </div>
   </div>
+
   <script src="../js/api.js"></script>
   <script src="../js/buyer.js"></script>
 </body>
